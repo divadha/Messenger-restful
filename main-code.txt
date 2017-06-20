@@ -1,0 +1,177 @@
+<<<\src\com\divad\messenger\database\DatabaseClass.javapackage com.divad.messenger.database;
+import java.util.HashMap;import java.util.Map;
+import com.divad.messenger.model.Message;import com.divad.messenger.model.Profile;
+public class DatabaseClass {
+ private static Map<Long, Message> messages = new HashMap<>(); private static Map<String, Profile> profiles = new HashMap<>();
+ public static Map<Long, Message> getMessages() {  return messages; }
+ public static Map<String, Profile> getProfiles() {  return profiles; }
+}>>><<<\src\com\divad\messenger\exception\DataNotFoundException.javapackage com.divad.messenger.exception;
+public class DataNotFoundException extends RuntimeException {
+ public DataNotFoundException(String message) {  super(message); }
+ private static final long serialVersionUID = 1682668909264497493L;
+}>>><<<\src\com\divad\messenger\exception\DataNotFoundExceptionMapper.javapackage com.divad.messenger.exception;
+import javax.ws.rs.core.Response;import javax.ws.rs.core.Response.Status;import javax.ws.rs.ext.ExceptionMapper;import javax.ws.rs.ext.Provider;
+import com.divad.messenger.model.ErrorMessage;
+@Providerpublic class DataNotFoundExceptionMapper implements ExceptionMapper<DataNotFoundException> {
+ @Override public Response toResponse(DataNotFoundException ex) {  ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), 404, "Documentation link");  return Response.status(Status.NOT_FOUND).entity(errorMessage).build(); }
+}>>><<<\src\com\divad\messenger\exception\GenericExceptionMapper.javapackage com.divad.messenger.exception;
+import javax.ws.rs.core.MediaType;import javax.ws.rs.core.Response;import javax.ws.rs.core.Response.Status;import javax.ws.rs.ext.ExceptionMapper;import javax.ws.rs.ext.Provider;
+import com.divad.messenger.model.ErrorMessage;
+@Providerpublic class GenericExceptionMapper implements ExceptionMapper<Throwable> {
+ @Override public Response toResponse(Throwable ex) {  ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), 500, "Documentation link");  return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorMessage).type(MediaType.APPLICATION_JSON)    .build(); }
+}>>><<<\src\com\divad\messenger\model\Comment.javapackage com.divad.messenger.model;
+import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
+@XmlRootElementpublic class Comment {
+ private long id; private String message; private Date created; private String autor;
+ public Comment() {
+ }
+ public Comment(String message, String autor) {  this.message = message;  this.autor = autor; }
+ public Comment(long id, String message, String autor) {  this.id = id;  this.message = message;  this.autor = autor; }
+ public long getId() {  return id; }
+ public void setId(long id) {  this.id = id; }
+ public String getMessage() {  return message; }
+ public void setMessage(String message) {  this.message = message; }
+ public Date getCreated() {  return created; }
+ public void setCreated(Date created) {  this.created = created; }
+ public String getAutor() {  return autor; }
+ public void setAutor(String autor) {  this.autor = autor; }
+ @Override public String toString() {  return "Comment [id=" + id + ", message=" + message + ", created=" + created + ", autor=" + autor + "]"; }  
+}>>><<<\src\com\divad\messenger\model\ErrorMessage.javapackage com.divad.messenger.model;
+import javax.xml.bind.annotation.XmlRootElement;
+@XmlRootElementpublic class ErrorMessage {
+ private String errorMessage; private int errorCode; private String documentation;
+ public ErrorMessage() { }
+ public ErrorMessage(String errorMessage, int errorCode, String documentation) {  this.errorMessage = errorMessage;  this.errorCode = errorCode;  this.documentation = documentation; }
+ public String getErrorMessage() {  return errorMessage; }
+ public void setErrorMessage(String errorMessage) {  this.errorMessage = errorMessage; }
+ public int getErrorCode() {  return errorCode; }
+ public void setErrorCode(int errorCode) {  this.errorCode = errorCode; }
+ public String getDocumentation() {  return documentation; }
+ public void setDocumentation(String documentation) {  this.documentation = documentation; }
+}>>><<<\src\com\divad\messenger\model\Link.javapackage com.divad.messenger.model;
+public class Link {
+ private String link; private String rel;
+ public Link() { }
+ public Link(String link, String rel) {  this.link = link;  this.rel = rel; }
+ public String getLink() {  return link; }
+ public void setLink(String link) {  this.link = link; }
+ public String getRel() {  return rel; }
+ public void setRel(String rel) {  this.rel = rel; }
+}>>><<<\src\com\divad\messenger\model\Message.javapackage com.divad.messenger.model;
+import java.util.ArrayList;import java.util.Date;import java.util.HashMap;import java.util.List;import java.util.Map;
+import javax.xml.bind.annotation.XmlRootElement;import javax.xml.bind.annotation.XmlTransient;
+@XmlRootElementpublic class Message {
+ private long id; private String message; private Date created; private String author; private Map<Long, Comment> comments = new HashMap<Long, Comment>(); private List<Link> links = new ArrayList<>();
+ public Message() {
+ }
+ public Message(long id, String message, String author) {  super();  this.id = id;  this.message = message;  this.author = author; }
+ public Message(String message, String author) {  super();  this.message = message;  this.author = author; }
+ public long getId() {  return id; }
+ public void setId(long id) {  this.id = id; }
+ public String getMessage() {  return message; }
+ public void setMessage(String message) {  this.message = message; }
+ public Date getCreated() {  return created; }
+ public void setCreated(Date created) {  this.created = created; }
+ public String getAuthor() {  return author; }
+ public void setAuthor(String author) {  this.author = author; }
+ @Override public String toString() {  return "{id:" + id + ", message:" + message + ", created:" + created + ", author:" + author + "}"; }
+ @XmlTransient public Map<Long, Comment> getComments() {  return comments; }
+ public void setComments(Map<Long, Comment> comments) {  this.comments = comments; }
+ public List<Link> getLinks() {  return links; }
+ public void setLinks(List<Link> links) {  this.links = links; }
+ public void addLink(String url, String rel) {  Link link = new Link();  link.setLink(url);  link.setRel(rel);  links.add(link); }}>>><<<\src\com\divad\messenger\model\Profile.javapackage com.divad.messenger.model;
+import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
+@XmlRootElementpublic class Profile {
+ private long id; private String profileName; private String firstName; private String lastName; private Date created;
+ public Profile() {
+ }
+ public Profile(String profileName, String firstName, String lastName) {  super();  this.profileName = profileName;  this.firstName = firstName;  this.lastName = lastName; }
+ public Profile(long id, String profileName, String firstName, String lastName) {  super();  this.id = id;  this.profileName = profileName;  this.firstName = firstName;  this.lastName = lastName; }
+ public long getId() {  return id; }
+ public void setId(long id) {  this.id = id; }
+ public String getProfileName() {  return profileName; }
+ public void setProfileName(String profileName) {  this.profileName = profileName; }
+ public String getFirstName() {  return firstName; }
+ public void setFirstName(String firstName) {  this.firstName = firstName; }
+ public String getLastName() {  return lastName; }
+ public void setLastName(String lastName) {  this.lastName = lastName; }
+ public Date getCreated() {  return created; }
+ public void setCreated(Date created) {  this.created = created; }
+}>>><<<\src\com\divad\messenger\resources\CommentResource.javapackage com.divad.messenger.resources;
+import java.util.List;
+import javax.ws.rs.Consumes;import javax.ws.rs.DELETE;import javax.ws.rs.GET;import javax.ws.rs.POST;import javax.ws.rs.PUT;import javax.ws.rs.Path;import javax.ws.rs.PathParam;import javax.ws.rs.Produces;import javax.ws.rs.core.MediaType;
+import com.divad.messenger.model.Comment;import com.divad.messenger.service.CommentService;
+@Path("/messages/{messageId}/comments")@Consumes(MediaType.APPLICATION_JSON)@Produces(MediaType.APPLICATION_JSON)public class CommentResource {
+ private CommentService commentService = CommentService.getInstance();
+ @GET public List<Comment> getComments(@PathParam("messageId") long messageId) {  return commentService.getAllComments(messageId); }
+ @GET @Path("/{commentId}") public Comment getComments(@PathParam("messageId") long messageId, @PathParam("commentId") long commentId) {  return commentService.getComment(messageId, commentId); }
+ @POST public Comment addComment(@PathParam("messageId") long messageId, Comment comment) {  return commentService.addComment(messageId, comment); }
+ @PUT @Path("/{commentId}") public Comment updateComment(@PathParam("messageId") long messageId, @PathParam("commentId") long id,   Comment comment) {  comment.setId(id);  return commentService.updateComment(messageId, comment); }
+ @DELETE @Path("/{commentId}") public void deleteMessages(@PathParam("messageId") long messageId, @PathParam("commentId") long commentId) {  commentService.removeComment(messageId, commentId); }
+}>>><<<\src\com\divad\messenger\resources\MessengerResource.javapackage com.divad.messenger.resources;
+import java.util.List;
+import javax.ws.rs.Consumes;import javax.ws.rs.DELETE;import javax.ws.rs.GET;import javax.ws.rs.POST;import javax.ws.rs.PUT;import javax.ws.rs.Path;import javax.ws.rs.PathParam;import javax.ws.rs.Produces;import javax.ws.rs.core.Context;import javax.ws.rs.core.MediaType;import javax.ws.rs.core.UriInfo;
+import com.divad.messenger.exception.DataNotFoundException;import com.divad.messenger.model.Message;import com.divad.messenger.service.MessageService;
+@Path("/messages")@Consumes(MediaType.APPLICATION_JSON)@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })public class MessengerResource {
+ private MessageService msgService = MessageService.getInstance();
+ @GET public List<Message> getMessages() {  return msgService.getAllMessages(); }
+ @POST public Message addMessage(Message message) {  return msgService.addMessage(message); }
+ @PUT @Path("/{messageId}") public Message updateMessage(@PathParam("messageId") long id, Message message) {  message.setId(id);  return msgService.updateMessage(message); }
+ @GET @Path("/{messageId}") public Message getMessages(@PathParam("messageId") long messageId, @Context UriInfo uriInfo) {  Message message = msgService.getMessage(messageId);  if (message == null) {   throw new DataNotFoundException("Message with id " + messageId + " not found");  }
+  message.addLink(getUriForSelf(message, uriInfo), "self");  message.addLink(getUriForProfile(message, uriInfo), "profile");  message.addLink(getUriForComments(message, uriInfo), "comments");  return message; }
+ private String getUriForComments(Message message, UriInfo uriInfo) {  return uriInfo    .getBaseUriBuilder()    .path(MessengerResource.class)    .path(Long.toString(message.getId()))    .path("comments")    .build()    .toString(); }
+ private String getUriForProfile(Message message, UriInfo uriInfo) {  return uriInfo.getBaseUriBuilder().path(ProfileResource.class).path(message.getAuthor()).build().toString(); }
+ private String getUriForSelf(Message message, UriInfo uriInfo) {  return uriInfo.getBaseUriBuilder().path(MessengerResource.class).path(Long.toString(message.getId())).build()    .toString(); }
+ @DELETE @Path("/{messageId}") public void deleteMessages(@PathParam("messageId") long id) {  msgService.removeMessage(id); }
+}>>><<<\src\com\divad\messenger\resources\ProfileResource.javapackage com.divad.messenger.resources;
+import java.util.List;
+import javax.ws.rs.Consumes;import javax.ws.rs.DELETE;import javax.ws.rs.GET;import javax.ws.rs.POST;import javax.ws.rs.PUT;import javax.ws.rs.Path;import javax.ws.rs.PathParam;import javax.ws.rs.Produces;import javax.ws.rs.core.MediaType;
+import com.divad.messenger.model.Profile;import com.divad.messenger.service.ProfileService;
+@Path("/profiles")@Consumes(MediaType.APPLICATION_JSON)@Produces(MediaType.APPLICATION_JSON)public class ProfileResource {
+ private ProfileService profileService = ProfileService.getInstance();
+ @GET public List<Profile> getProfiles() {  return profileService.getAllProfiles(); }
+ @POST public Profile addProfile(Profile profile) {  return profileService.addProfile(profile); }
+ @GET @Path("/{profileName}") public Profile getProfile(@PathParam("profileName") String profileName) {  return profileService.getProfile(profileName); }
+ @PUT @Path("/{profileName}") public Profile updateProfile(@PathParam("profileName") String profileName, Profile profile) {  profile.setProfileName(profileName);  return profileService.updateProfile(profile); }
+ @DELETE @Path("/{profileName}") public void deleteProfile(@PathParam("profileName") String profileName) {  profileService.removeProfile(profileName); }
+}>>><<<\src\com\divad\messenger\service\CommentService.javapackage com.divad.messenger.service;
+import java.util.ArrayList;import java.util.Date;import java.util.List;import java.util.Map;
+import javax.ws.rs.WebApplicationException;import javax.ws.rs.core.MediaType;import javax.ws.rs.core.Response;import javax.ws.rs.core.Response.Status;
+import com.divad.messenger.database.DatabaseClass;import com.divad.messenger.model.Comment;import com.divad.messenger.model.ErrorMessage;import com.divad.messenger.model.Message;
+public class CommentService {
+ private static Map<Long, Message> messages = DatabaseClass.getMessages(); private static int index = 0; private static CommentService commentService = null;
+ private CommentService() { }
+ public static CommentService getInstance() {  if (commentService == null) {   commentService = new CommentService();  }  return commentService; }
+ public List<Comment> getAllComments(long messageId) {  Message message = messages.get(messageId);
+  if (message == null || message.getComments().isEmpty()) {   return new ArrayList<Comment>();  }  return new ArrayList<Comment>(message.getComments().values()); }
+ public Comment getComment(long messageId, long commentId) {  Message message = messages.get(messageId);  if (message == null) {   ErrorMessage errorMessage = new ErrorMessage("Not Found", 404, "Documentation link");   Response response = Response.status(Status.INTERNAL_SERVER_ERROR)     .entity(errorMessage)     .type(MediaType.APPLICATION_JSON)     .build();   throw new WebApplicationException(response);  }    Comment comment = message.getComments().get(commentId);  if(comment == null) {   ErrorMessage errorMessage = new ErrorMessage("Not Found", 404, "Documentation link");   Response response = Response.status(Status.INTERNAL_SERVER_ERROR)     .entity(errorMessage)     .type(MediaType.APPLICATION_JSON)     .build();   throw new WebApplicationException(response);  }    return comment; }
+ public Comment addComment(long messageId, Comment comment) {  comment.setId(++index);  comment.setCreated(new Date());  messages.get(messageId).getComments().put(comment.getId(), comment);  return comment; }
+ public Comment updateComment(long messageId, Comment comment) {  if (messageId == 0 || comment.getId() == 0) {   return null;  }  messages.get(messageId).getComments().put(comment.getId(), comment);  return comment; }
+ public Comment removeComment(long messageId, long commentId) {  return messages.get(messageId).getComments().remove(commentId); }
+}>>><<<\src\com\divad\messenger\service\MessageService.javapackage com.divad.messenger.service;
+import java.util.ArrayList;import java.util.Date;import java.util.List;import java.util.Map;
+import com.divad.messenger.database.DatabaseClass;import com.divad.messenger.model.Message;
+public class MessageService {
+ private static Map<Long, Message> messages = DatabaseClass.getMessages(); private static int index = 0; private static MessageService messageService = null;
+ private MessageService() {  addMessage(new Message("Hello World", "David"));  addMessage(new Message("Something", "John")); }  public static MessageService getInstance() {  if (messageService == null) {   messageService = new MessageService();  }  return messageService; }
+ public Message getMessage(long id) {  return messages.get(id); }
+ public List<Message> getAllMessages() {  return new ArrayList<Message>(messages.values()); }
+ public Message addMessage(Message message) {  message.setId(++index);  message.setCreated(new Date());  messages.put(message.getId(), message);  return message; }
+ public Message updateMessage(Message message) {  if (message.getId() == 0) {   return null;  }  messages.put(message.getId(), message);  return message; }
+ public Message removeMessage(long id) {  return messages.remove(id); }
+}>>><<<\src\com\divad\messenger\service\ProfileService.javapackage com.divad.messenger.service;
+import java.util.ArrayList;import java.util.Date;import java.util.List;import java.util.Map;
+import com.divad.messenger.database.DatabaseClass;import com.divad.messenger.model.Profile;
+public class ProfileService {
+ private static Map<String, Profile> profiles = DatabaseClass.getProfiles(); private static int index = 0; private static ProfileService profileService = null;
+ private ProfileService() {  addProfile(new Profile("David", "David", "Hdz."));  addProfile(new Profile("John", "John", "Smith.")); }
+ public static ProfileService getInstance() {  if (profileService == null) {   profileService = new ProfileService();  }  return profileService; }
+ public Profile getProfile(String id) {  return profiles.get(id); }
+ public List<Profile> getAllProfiles() {  return new ArrayList<Profile>(profiles.values()); }
+ public Profile addProfile(Profile profile) {  profile.setId(++index);  profile.setCreated(new Date());  profiles.put(profile.getProfileName(), profile);  return profile; }
+ public Profile updateProfile(Profile profile) {  if (profile.getProfileName() == null || profile.getProfileName().isEmpty()) {   return null;  }  profiles.put(profile.getProfileName(), profile);  return profile; }
+ public Profile removeProfile(String profileName) {  return profiles.remove(profileName); }
+}>>><<<\WebContent\META-INF\MANIFEST.MFManifest-Version: 1.0Class-Path: 
+>>><<<\WebContent\WEB-INF\web.xml<?xml version="1.0" encoding="UTF-8"?><web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">  <display-name>messenger</display-name>  <servlet>    <servlet-name>messenger</servlet-name>    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>    <init-param>      <param-name>com.sun.jersey.config.property.packages</param-name>      <param-value>com.divad.messenger</param-value>    </init-param>    <load-on-startup>1</load-on-startup>  </servlet>  <servlet-mapping>    <servlet-name>messenger</servlet-name>    <url-pattern>/*</url-pattern>  </servlet-mapping></web-app>>>>
